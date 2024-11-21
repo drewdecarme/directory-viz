@@ -52,8 +52,9 @@ const NODE_PADDING_LEFT = 20;
 const NODE_TEXT_PADDING_LEFT = 10;
 const NODE_FONT_SIZE = 16;
 const NODE_NESTED_INDENT = 30; // Indentation per depth
-const NODE_FONT_FAMILY = "Inter, sans-serif";
-const NODE_ICON_DIMENSION = 16;
+// const NODE_FONT_FAMILY = "Inter, sans-serif";
+const NODE_FONT_FAMILY = "Excalifont, sans-serif";
+const NODE_ICON_DIMENSION = 24;
 
 const BOX_PADDING_TOP = 0;
 const BOX_PADDING_RIGHT = 0;

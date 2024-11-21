@@ -19,6 +19,14 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  {
+    rel: "stylesheet",
+    href: "/font/excalifont/stylesheet.css",
+  },
+  {
+    rel: "stylesheet",
+    href: "/font/baloo/stylesheet.css",
+  },
 ];
 
 const layoutCss = css`
@@ -27,7 +35,7 @@ const layoutCss = css`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  font-family: Inter, "sans-serif";
+  font-family: Baloo, "sans-serif";
 
   box-sizing: border-box;
   * {
@@ -41,7 +49,6 @@ const layoutCss = css`
   display: grid;
   grid-template-columns: auto auto 1fr;
   grid-template-rows: 80px 1fr;
-  gap: 1rem;
   grid-template-areas:
     "top-nav top-nav top-nav"
     "side-nav input output";
