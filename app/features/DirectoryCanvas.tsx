@@ -12,98 +12,268 @@ import {
   type DirectoryGraphNode,
   useDirectoryContext,
 } from "./Directory.context";
+import { type IconMap, type IconNames, useIcons } from "./useIcons";
 
-type SceneNode = {
+type SceneManifestEntryShared = {
   id: string;
-  text: string;
   x: number;
   y: number;
   width: number;
   height: number;
-  children: SceneNode[];
+  meta: {
+    isLastNode: boolean;
+  };
 };
 
-type SceneGraph = SceneNode[];
+export type SceneManifestEntryNode = SceneManifestEntryShared & {
+  type: "node";
+  text: string;
+  xText: number;
+  yText: number;
+  xIcon: number;
+  yIcon: number;
+  children: SceneManifestEntryNode[];
+  meta: SceneManifestEntryShared["meta"] & {
+    iconType: IconNames;
+  };
+};
+type SceneManifestEntryBoundary = SceneManifestEntryShared & {
+  type: "boundary";
+};
+
+type SceneManifestEntry = SceneManifestEntryNode | SceneManifestEntryBoundary;
+
+type SceneManifest = SceneManifestEntry[];
 
 // Constants for node dimensions
-const NODE_WIDTH = 150;
-const NODE_HEIGHT = 30;
-const HORIZONTAL_INDENT = 20; // Indentation per depth
-const VERTICAL_SPACING = 10; // Spacing between nodes
+const NODE_PADDING_TOP = 20;
+const NODE_PADDING_BOTTOM = 20;
+const NODE_PADDING_LEFT = 20;
+const NODE_TEXT_PADDING_LEFT = 10;
+const NODE_FONT_SIZE = 16;
+const NODE_NESTED_INDENT = 30; // Indentation per depth
+const NODE_FONT_FAMILY = "Inter, sans-serif";
+const NODE_ICON_DIMENSION = 16;
 
-function translateToSceneGraph(
+const BOX_PADDING_TOP = 0;
+const BOX_PADDING_RIGHT = 0;
+const BOX_PADDING_BOTTOM = 0;
+const BOX_PADDING_LEFT = 0;
+const BOX_RADIUS = 10;
+const BOX_WIDTH = 300;
+
+function translateToSceneManifest(
   graph: DirectoryGraph,
   canvasWidth: number,
   canvasHeight: number,
   depth = 0
-): { sceneGraph: SceneGraph; totalWidth: number; totalHeight: number } {
+): { sceneManifest: SceneManifest; totalWidth: number; totalHeight: number } {
   let currentY = 0;
   let maxDepth = 0;
+  const sceneManifest: SceneManifest = [];
 
-  const traverse = (node: DirectoryGraphNode, depth: number): SceneNode => {
+  // get all of the nodes
+  const traverseSceneManifestEntryNodes = (
+    node: DirectoryGraphNode,
+    depth: number
+  ): SceneManifestEntryNode => {
     maxDepth = Math.max(maxDepth, depth);
 
-    const sceneNode: SceneNode = {
+    const nodeXIndent = depth * NODE_NESTED_INDENT;
+    const nodeXIcon = NODE_PADDING_LEFT + nodeXIndent; // the indentation of the line it's on
+    const nodeXText =
+      nodeXIcon + // the amount of padding it should be away from that indent
+      NODE_ICON_DIMENSION + // the width of the icon
+      NODE_TEXT_PADDING_LEFT; // the amount of space between the icon and the text;
+
+    console.log({ nodeXIndent, nodeXIcon, nodeXText });
+
+    const nodeWith = BOX_WIDTH - nodeXIndent;
+
+    const nodeHeight = NODE_PADDING_BOTTOM + NODE_FONT_SIZE + NODE_PADDING_TOP;
+    const nodeYText = currentY + nodeHeight / 2;
+    const nodeYIcon = nodeYText - NODE_ICON_DIMENSION / 2;
+    const nodeChildrenValues = Object.values(node.childNodes);
+
+    function getIconType(): IconNames {
+      if (nodeChildrenValues.length === 0) {
+        return "file";
+      }
+      return "folder";
+    }
+
+    const entry: SceneManifestEntryNode = {
+      type: "node",
       id: node.id,
       text: node.text,
-      x: depth * HORIZONTAL_INDENT,
+      x: nodeXIndent,
       y: currentY,
-      width: NODE_WIDTH,
-      height: NODE_HEIGHT,
+      xText: nodeXText,
+      yText: nodeYText,
+      xIcon: nodeXIcon,
+      yIcon: nodeYIcon,
+      width: nodeWith,
+      height: nodeHeight,
+      meta: {
+        isLastNode: false,
+        iconType: getIconType(),
+      },
       children: [],
     };
 
-    currentY += NODE_HEIGHT + VERTICAL_SPACING;
+    // Update where the next node should be located
+    currentY += nodeHeight;
 
-    sceneNode.children = Object.values(node.childNodes).map((child) =>
-      traverse(child, depth + 1)
+    // Add children to the entry. This should be done after the currentY
+    // is set since the recursive function set's the variable that's hoisted
+    // out of the scope of this fn.
+    entry.children = nodeChildrenValues.map((child) =>
+      traverseSceneManifestEntryNodes(child, depth + 1)
     );
 
-    return sceneNode;
+    return entry;
   };
 
-  const sceneGraph = Object.values(graph).map((node) => traverse(node, depth));
-  const totalWidth = maxDepth * HORIZONTAL_INDENT + NODE_WIDTH;
+  for (const sceneEntryNode of Object.values(graph)) {
+    sceneManifest.push(traverseSceneManifestEntryNodes(sceneEntryNode, depth));
+  }
+
+  const totalWidth = BOX_WIDTH;
   const totalHeight = currentY;
 
   // Calculate the offsets to center the graph
-  const xOffset = (canvasWidth - totalWidth) / 2;
-  const yOffset = (canvasHeight - totalHeight) / 2;
+
+  // add the bounded box to the first part of the manifest to be drawn first
+  const firstEntryNode = sceneManifest.find((entry) => entry.type === "node");
+  if (!firstEntryNode) {
+    throw "Cannot find the start manifest entry node.";
+  }
+  sceneManifest.unshift({
+    type: "boundary",
+    id: "bounded-box",
+    x: firstEntryNode.x - BOX_PADDING_LEFT,
+    width: totalWidth + BOX_PADDING_LEFT + BOX_PADDING_RIGHT,
+    y: firstEntryNode.y - BOX_PADDING_TOP,
+    height: totalHeight + BOX_PADDING_TOP * BOX_PADDING_BOTTOM,
+    meta: {
+      isLastNode: false,
+    },
+  });
 
   // Apply offsets to all nodes
-  const applyOffsets = (node: SceneNode) => {
+  const xOffset = (canvasWidth - totalWidth) / 2;
+  const yOffset = (canvasHeight - totalHeight) / 2;
+  const applyOffsets = (node: SceneManifestEntry) => {
     node.x += xOffset;
     node.y += yOffset;
-    node.children.forEach(applyOffsets);
+    if (node.type === "node") {
+      node.xText += xOffset;
+      node.yText += yOffset;
+      node.xIcon += xOffset;
+      node.yIcon += yOffset;
+      node.children.forEach(applyOffsets);
+    }
+  };
+  sceneManifest.forEach(applyOffsets);
+
+  // Apply meta
+  const applyMeta = (node: SceneManifestEntry, isParentLastEntry: boolean) => {
+    if (node.type === "node" && node.children.length !== 0) {
+      node.children.forEach((entry, i, origArr) => {
+        const isLastEntry = i === origArr.length - 1;
+        applyMeta(entry, isParentLastEntry && isLastEntry);
+      });
+    } else {
+      node.meta.isLastNode = isParentLastEntry;
+    }
   };
 
-  sceneGraph.forEach(applyOffsets);
+  sceneManifest.forEach((entry, i, origArr) => {
+    const isLastEntry = i === origArr.length - 1;
+    applyMeta(entry, isLastEntry);
+  });
 
-  return { sceneGraph, totalWidth, totalHeight };
+  return { sceneManifest, totalWidth, totalHeight };
 }
 
 // Render the scene graph
-function renderSceneGraph(
+function renderSceneManifest(
   ctx: CanvasRenderingContext2D,
-  sceneGraph: SceneGraph
+  sceneManifest: SceneManifest,
+  options: {
+    totalHeight: number;
+    totalWidth: number;
+    iconMap: IconMap;
+  }
 ): void {
-  const drawNode = (node: SceneNode): void => {
-    // Draw the node box
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(node.x, node.y, node.width, node.height);
-    ctx.strokeStyle = "#000";
-    ctx.strokeRect(node.x, node.y, node.width, node.height);
+  let boundaryX = 0;
 
-    // Draw the node text
-    ctx.fillStyle = "#000";
-    ctx.font = "14px Arial";
-    ctx.fillText(node.text, node.x + 10, node.y + 20);
+  // let largestX2 = 0;
+  const drawNode = (node: SceneManifestEntry): void => {
+    switch (node.type) {
+      case "boundary":
+        ctx.beginPath();
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "#919191";
+        ctx.shadowBlur = 10;
+        boundaryX = node.x;
+        ctx.roundRect(node.x, node.y, node.width, node.height, BOX_RADIUS);
+        ctx.fill();
 
-    // Recursively draw child nodes
-    node.children.forEach(drawNode);
+        // Reset shadow properties to prevent them from affecting the stroke
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+
+        // Write the stroke of the path
+        ctx.strokeStyle = "#c3c3c3";
+        ctx.stroke();
+        break;
+
+      case "node": {
+        ctx.beginPath();
+        ctx.fillStyle = "#000";
+        ctx.font = `${NODE_FONT_SIZE}px ${NODE_FONT_FAMILY}`;
+        ctx.textBaseline = "middle";
+        ctx.fillText(node.text, node.xText, node.yText);
+
+        // Draw the SVG
+        const icon = options.iconMap.get(node.meta.iconType);
+        if (!icon) {
+          console.log("no icon available.");
+          return;
+        }
+        console.log(node.xIcon, node.yIcon);
+        ctx.drawImage(
+          icon?.img,
+          node.xIcon,
+          node.yIcon,
+          NODE_ICON_DIMENSION,
+          NODE_ICON_DIMENSION
+        );
+
+        // Create the horizontal lines
+        if (!node.meta.isLastNode) {
+          ctx.beginPath();
+          ctx.moveTo(boundaryX, node.y + node.height); // Start at the bottom-left corner of the rectangle
+          ctx.lineTo(boundaryX + options.totalWidth, node.y + node.height); // Draw a line to the bottom-right corner
+          ctx.strokeStyle = "#cbcbcb40";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        // Recursively draw child nodes
+        node.children.forEach(drawNode);
+        break;
+      }
+
+      default:
+        break;
+    }
   };
 
-  sceneGraph.forEach(drawNode);
+  console.log({ sceneManifest });
+
+  sceneManifest.forEach(drawNode);
 }
 
 const canvasStyles = css`
@@ -119,6 +289,7 @@ export function DirectoryCanvas() {
   const [scale, setScale] = useState(1); // Zoom scale
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { getIcons } = useIcons();
 
   const containerRefCallback = useCallback<RefCallback<HTMLDivElement>>(
     (node) => {
@@ -153,39 +324,53 @@ export function DirectoryCanvas() {
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current || !containerDim) return;
-    const canvas = canvasRef.current;
+    if (
+      !canvasRef.current ||
+      !containerRef.current ||
+      !containerDim ||
+      Object.keys(graph).length === 0
+    ) {
+      return;
+    }
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    async function renderDirectory() {
+      if (!canvasRef.current || !containerDim) return;
+      const ctx = canvasRef.current.getContext("2d");
+      if (!ctx) return;
 
-    // Get canvas dimensions
-    const canvasWidth = containerRef.current.offsetWidth;
-    const canvasHeight = containerRef.current.offsetHeight;
+      const iconMap = await getIcons();
 
-    // Translate the graph to a centered scene graph
-    const { sceneGraph } = translateToSceneGraph(
-      graph,
-      containerDim.width,
-      containerDim.height
-    );
+      // Translate the graph to a centered scene graph
+      const { sceneManifest, totalHeight, totalWidth } =
+        translateToSceneManifest(
+          graph,
+          containerDim.width,
+          containerDim.height
+        );
 
-    // Clear the canvas and render the scene graph
-    ctx.save();
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      // Clear the canvas and render the scene graph
+      ctx.save();
+      ctx.clearRect(0, 0, totalWidth, totalHeight);
 
-    ctx.scale(scale, scale);
+      ctx.scale(scale, scale);
 
-    renderSceneGraph(ctx, sceneGraph);
+      renderSceneManifest(ctx, sceneManifest, {
+        totalHeight,
+        totalWidth,
+        iconMap,
+      });
 
-    ctx.restore();
-  }, [containerDim, graph, scale]);
+      ctx.restore();
+    }
+
+    renderDirectory();
+  }, [containerDim, getIcons, graph, scale]);
 
   const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>((e) => {
     // command on mac
     if (e.metaKey) {
       console.log("scrolling");
-      const zoomFactor = 1.1;
+      const zoomFactor = 1.05;
       setScale((prevScale) =>
         e.deltaY > 0 ? prevScale / zoomFactor : prevScale * zoomFactor
       );
