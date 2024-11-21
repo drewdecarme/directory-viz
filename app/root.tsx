@@ -27,6 +27,7 @@ const layoutCss = css`
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-family: Inter, "sans-serif";
 
   box-sizing: border-box;
   * {

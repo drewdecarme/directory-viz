@@ -67,7 +67,7 @@ function translateToSceneManifest(
   canvasWidth: number,
   canvasHeight: number,
   depth = 0
-): { sceneManifest: SceneManifest; totalWidth: number; totalHeight: number } {
+): SceneManifest {
   let currentY = 0;
   let maxDepth = 0;
   const sceneManifest: SceneManifest = [];
@@ -193,18 +193,14 @@ function translateToSceneManifest(
     applyMeta(entry, isLastEntry);
   });
 
-  return { sceneManifest, totalWidth, totalHeight };
+  return sceneManifest;
 }
 
 // Render the scene graph
 function renderSceneManifest(
   ctx: CanvasRenderingContext2D,
   sceneManifest: SceneManifest,
-  options: {
-    totalHeight: number;
-    totalWidth: number;
-    iconMap: IconMap;
-  }
+  iconMap: IconMap
 ): void {
   let boundaryX = 0;
 
@@ -237,12 +233,11 @@ function renderSceneManifest(
         ctx.fillText(node.text, node.xText, node.yText);
 
         // Draw the SVG
-        const icon = options.iconMap.get(node.meta.iconType);
+        const icon = iconMap.get(node.meta.iconType);
         if (!icon) {
           console.log("no icon available.");
           return;
         }
-        console.log(node.xIcon, node.yIcon);
         ctx.drawImage(
           icon?.img,
           node.xIcon,
@@ -255,7 +250,7 @@ function renderSceneManifest(
         if (!node.meta.isLastNode) {
           ctx.beginPath();
           ctx.moveTo(boundaryX, node.y + node.height); // Start at the bottom-left corner of the rectangle
-          ctx.lineTo(boundaryX + options.totalWidth, node.y + node.height); // Draw a line to the bottom-right corner
+          ctx.lineTo(boundaryX + BOX_WIDTH, node.y + node.height); // Draw a line to the bottom-right corner
           ctx.strokeStyle = "#cbcbcb40";
           ctx.lineWidth = 1;
           ctx.stroke();
@@ -271,8 +266,6 @@ function renderSceneManifest(
     }
   };
 
-  console.log({ sceneManifest });
-
   sceneManifest.forEach(drawNode);
 }
 
@@ -282,14 +275,15 @@ const canvasStyles = css`
 `;
 
 export function DirectoryCanvas() {
+  const { getIcons } = useIcons();
   const { graph } = useDirectoryContext();
-  const [containerDim, setContainerDim] = useState<
+  const [container, setContainerDim] = useState<
     { height: number; width: number } | undefined
   >(undefined);
-  const [scale, setScale] = useState(1); // Zoom scale
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { getIcons } = useIcons();
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1); // Zoom scale
 
   const containerRefCallback = useCallback<RefCallback<HTMLDivElement>>(
     (node) => {
@@ -327,60 +321,85 @@ export function DirectoryCanvas() {
     if (
       !canvasRef.current ||
       !containerRef.current ||
-      !containerDim ||
+      !container ||
       Object.keys(graph).length === 0
     ) {
       return;
     }
 
-    async function renderDirectory() {
-      if (!canvasRef.current || !containerDim) return;
+    async function draw() {
+      if (!canvasRef.current || !container) return;
+
+      // get the canvas context
+      const context = canvasRef.current.getContext("2d");
+      if (!context) return;
+
+      // get the icons
+      const iconMap = await getIcons();
+
+      // Transform the graph into a scene manifest
+      const sceneManifest = translateToSceneManifest(
+        graph,
+        container.width,
+        container.height
+      );
+
+      context.save();
+
+      // Clear the canvas and render the scene graph
+      context.setTransform(1, 0, 0, 1, 0, 0); // Reset transformations
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+      // Apply scaling and panning
+      context.translate(offset.x, offset.y);
+      context.scale(scale, scale);
+
+      // draw the diagram onto the canvas
+      renderSceneManifest(context, sceneManifest, iconMap);
+
+      context.restore();
+    }
+
+    draw();
+  }, [container, getIcons, graph, offset.x, offset.y, scale]);
+
+  const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>(
+    (e) => {
+      if (!e.metaKey) return;
+      if (!canvasRef.current) return;
+
       const ctx = canvasRef.current.getContext("2d");
       if (!ctx) return;
 
-      const iconMap = await getIcons();
+      // Get mouse position relative to the canvas
+      const rect = canvasRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-      // Translate the graph to a centered scene graph
-      const { sceneManifest, totalHeight, totalWidth } =
-        translateToSceneManifest(
-          graph,
-          containerDim.width,
-          containerDim.height
-        );
+      // Convert mouse position to canvas coordinates
+      const canvasX = (mouseX - offset.x) / scale;
+      const canvasY = (mouseY - offset.y) / scale;
 
-      // Clear the canvas and render the scene graph
-      ctx.save();
-      ctx.clearRect(0, 0, totalWidth, totalHeight);
+      // Determine zoom factor
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
 
-      ctx.scale(scale, scale);
+      // Update scale
+      const newScale = scale * zoomFactor;
+      setScale(newScale);
 
-      renderSceneManifest(ctx, sceneManifest, {
-        totalHeight,
-        totalWidth,
-        iconMap,
+      // Adjust offsets to keep the cursor as the zoom origin
+      setOffset({
+        x: mouseX - canvasX * newScale,
+        y: mouseY - canvasY * newScale,
       });
-
-      ctx.restore();
-    }
-
-    renderDirectory();
-  }, [containerDim, getIcons, graph, scale]);
-
-  const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>((e) => {
-    // command on mac
-    if (e.metaKey) {
-      console.log("scrolling");
-      const zoomFactor = 1.05;
-      setScale((prevScale) =>
-        e.deltaY > 0 ? prevScale / zoomFactor : prevScale * zoomFactor
-      );
-    }
-  }, []);
+    },
+    [offset.x, offset.y, scale]
+  );
 
   return (
     <div className={canvasStyles} ref={containerRefCallback}>
-      {containerDim && (
-        <canvas ref={canvasRef} {...containerDim} onWheel={handleWheel} />
+      {container && (
+        <canvas ref={canvasRef} {...container} onWheel={handleWheel} />
       )}
     </div>
   );

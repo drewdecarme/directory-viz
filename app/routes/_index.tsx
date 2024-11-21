@@ -17,7 +17,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <DirectoryProvider>
-      <LayoutTopNav>Directory Vis</LayoutTopNav>
+      <LayoutTopNav />
       <LayoutSideNav>
         <DirectoryInput />
       </LayoutSideNav>
