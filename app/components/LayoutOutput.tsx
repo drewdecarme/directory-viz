@@ -9,6 +9,7 @@ const styles = css`
   grid-area: output;
   overflow: hidden;
   height: 100%;
+  background: #fafafa;
 `;
 
 export const LayoutOutput = forwardRef<HTMLDivElement, LayoutOutputProps>(

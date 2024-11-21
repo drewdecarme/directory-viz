@@ -4,8 +4,8 @@ import { LayoutOutput } from "~/components/LayoutOutput";
 import { LayoutSideNav } from "~/components/LayoutSidenav";
 import { LayoutTopNav } from "~/components/LayoutTopNav";
 import { DirectoryProvider } from "~/features/Directory.context";
+import { DirectoryCanvas } from "~/features/DirectoryCanvas";
 import { DirectoryInput } from "~/features/DirectoryInput";
-import { DirectoryOutput } from "~/features/DirectoryOutput";
 
 export const meta: MetaFunction = () => {
   return [
@@ -23,7 +23,7 @@ export default function Index() {
       </LayoutSideNav>
       <LayoutInput>input</LayoutInput>
       <LayoutOutput>
-        <DirectoryOutput />
+        <DirectoryCanvas />
       </LayoutOutput>
     </DirectoryProvider>
   );
