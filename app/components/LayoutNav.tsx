@@ -2,23 +2,26 @@ import { css } from "@linaria/core";
 import { clsx } from "clsx";
 import { forwardRef } from "react";
 
-export type LayoutTopNavPropsNative = JSX.IntrinsicElements["nav"];
-export type LayoutTopNavProps = LayoutTopNavPropsNative;
+export type LayoutNavPropsNative = JSX.IntrinsicElements["nav"];
+export type LayoutNavProps = LayoutNavPropsNative;
 
 const styles = css`
-  grid-area: top-nav;
-  padding: 0 2rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  width: 80px;
+  border-right: 1px solid var(--border-color);
 `;
 
 const imgStyles = css`
+  padding: 0.25rem;
   display: flex;
-  align-items: center;
-  height: 100%;
-  gap: 1rem;
+  justify-content: center;
 
   img {
-    height: 50%;
-    width: auto;
+    width: 50%;
   }
 
   div {
@@ -27,13 +30,12 @@ const imgStyles = css`
   }
 `;
 
-export const LayoutTopNav = forwardRef<HTMLElement, LayoutTopNavProps>(
-  function LayoutTopNav({ children, className, ...restProps }, ref) {
+export const LayoutNav = forwardRef<HTMLElement, LayoutNavProps>(
+  function LayoutNav({ children, className, ...restProps }, ref) {
     return (
       <nav {...restProps} className={clsx(styles, className)} ref={ref}>
         <div className={imgStyles}>
           <img src="/directory-viz-logo-5-transparent.png" alt="logo" />
-          <div>Directory Viz</div>
         </div>
         {children}
       </nav>

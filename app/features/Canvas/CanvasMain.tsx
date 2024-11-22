@@ -7,12 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
+import { type IconMap, type IconNames, useIcons } from "../useIcons";
 import {
   type DirectoryGraph,
   type DirectoryGraphNode,
   useDirectoryContext,
 } from "./Directory.context";
-import { type IconMap, type IconNames, useIcons } from "./useIcons";
 
 type SceneManifestEntryShared = {
   id: string;
@@ -275,7 +275,7 @@ const canvasStyles = css`
   width: 100%;
 `;
 
-export function DirectoryCanvas() {
+export function CanvasMain() {
   const { getIcons } = useIcons();
   const { graph } = useDirectoryContext();
   const [container, setContainerDim] = useState<

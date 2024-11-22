@@ -7,20 +7,34 @@ import {
   useRef,
 } from "react";
 
+import { LayoutPaneHeader } from "~/components/LayoutPaneHeader";
 import { useDirectoryContext } from "./Directory.context";
 import {
   INDENTATION,
   buildDirectoryGraphFromTextarea,
 } from "./buildDirectoryGraphFromTextarea";
 
-const styles = css`
+const inputStyles = css`
   width: 100%;
   height: 100%;
-  padding: 0.5rem;
+  padding: 1rem;
   resize: none;
+  border: 1px solid var(--border-color);
+  transition: all 0.15s ease-in-out;
+  border-radius: 0.25rem;
+
+  &:focus {
+    border-color: var(--color-primary);
+    outline: unset;
+  }
 `;
 
-export function DirectoryInput() {
+const contentStyles = css`
+  padding: 1rem;
+  height: 100%;
+`;
+
+export function CanvasPaneInput() {
   const { setGraph } = useDirectoryContext();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const firstRender = useRef(true);
@@ -87,8 +101,11 @@ export function DirectoryInput() {
   );
 
   return (
-    <textarea
-      defaultValue={`folder 1
+    <>
+      <LayoutPaneHeader dxTitle="Directory Outline" />
+      <div className={contentStyles}>
+        <textarea
+          defaultValue={`folder 1
     folder 1.1
         file 1.1.1
         file 1.1.2
@@ -99,10 +116,12 @@ folder 2
     folder 2.1
         file 2.1.1
     file 2.2`}
-      className={styles}
-      ref={textareaRef}
-      onChange={handleOnChange}
-      onKeyDown={handleOnKeydown}
-    />
+          className={inputStyles}
+          ref={textareaRef}
+          onChange={handleOnChange}
+          onKeyDown={handleOnKeydown}
+        />
+      </div>
+    </>
   );
 }

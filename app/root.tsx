@@ -1,4 +1,3 @@
-import { css } from "@linaria/core";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
@@ -7,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { Layout as LayoutBody } from "~/components/Layout";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -29,31 +29,6 @@ export const links: LinksFunction = () => [
   },
 ];
 
-const layoutCss = css`
-  padding: 0;
-  margin: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  font-family: Baloo, "sans-serif";
-
-  box-sizing: border-box;
-  * {
-    box-sizing: border-box;
-    &::after,
-    &::before {
-      box-sizing: border-box;
-    }
-  }
-
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  grid-template-rows: 80px 1fr;
-  grid-template-areas:
-    "top-nav top-nav top-nav"
-    "side-nav input output";
-`;
-
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -63,11 +38,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className={layoutCss}>
+      <LayoutBody>
         {children}
         <ScrollRestoration />
         <Scripts />
-      </body>
+      </LayoutBody>
     </html>
   );
 }
