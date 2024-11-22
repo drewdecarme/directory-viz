@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { type FC, type ReactNode, useContext, useMemo } from "react";
 import { type Updater, useImmer } from "use-immer";
 
@@ -16,6 +16,7 @@ export type DirectoryGraph = {
 type DirectoryContextType = {
   graph: DirectoryGraph;
   setGraph: Updater<DirectoryGraph>;
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
 };
 const DirectoryContext = React.createContext<DirectoryContextType | null>(null);
 export type DirectoryProviderProps = {
@@ -23,11 +24,13 @@ export type DirectoryProviderProps = {
 };
 export const DirectoryProvider: FC<DirectoryProviderProps> = ({ children }) => {
   const [graph, setGraph] = useImmer<DirectoryGraph>({});
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const value = useMemo(
     () => ({
       graph,
       setGraph,
+      canvasRef,
     }),
     [graph, setGraph]
   );

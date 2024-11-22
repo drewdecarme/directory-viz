@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { type IconMap, type IconNames, useIcons } from "../useIcons";
+import { type IconMap, type IconNames, useIcons } from "../../icons/useIcons";
 import {
   type DirectoryGraph,
   type DirectoryGraphNode,
@@ -277,11 +277,10 @@ const canvasStyles = css`
 
 export function CanvasMain() {
   const { getIcons } = useIcons();
-  const { graph } = useDirectoryContext();
+  const { graph, canvasRef } = useDirectoryContext();
   const [container, setContainerDim] = useState<
     { height: number; width: number } | undefined
   >(undefined);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1); // Zoom scale
@@ -362,7 +361,7 @@ export function CanvasMain() {
     }
 
     draw();
-  }, [container, getIcons, graph, offset.x, offset.y, scale]);
+  }, [canvasRef, container, getIcons, graph, offset.x, offset.y, scale]);
 
   const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>(
     (e) => {
@@ -394,7 +393,7 @@ export function CanvasMain() {
         y: mouseY - canvasY * newScale,
       });
     },
-    [offset.x, offset.y, scale]
+    [canvasRef, offset.x, offset.y, scale]
   );
 
   return (

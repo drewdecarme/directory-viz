@@ -1,0 +1,9 @@
+:root {
+  --font-family: Baloo, "sans-serif";
+  --font-family-body: Inter, "sans-serif";
+  --border-color: #eaeaea;
+  --color-primary-raw: 196, 145, 248;
+  --color-primary-dark-raw: 158, 70, 247;
+  --color-primary: rgb(var(--color-primary-raw));
+  --color-primary-dark: rgb(var(--color-primary-dark-raw));
+}

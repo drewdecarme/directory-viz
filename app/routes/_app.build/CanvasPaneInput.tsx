@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 
-import { LayoutPaneHeader } from "~/components/LayoutPaneHeader";
+import { LayoutPaneHeader } from "~/routes/_app/LayoutPaneHeader";
 import { useDirectoryContext } from "./Directory.context";
 import {
   INDENTATION,
