@@ -3,15 +3,19 @@ import { clsx } from "clsx";
 import { forwardRef } from "react";
 
 const layoutCss = css`
+  --font-family: Baloo, "sans-serif";
+  --font-family-body: Inter, "sans-serif";
+  --border-color: #eaeaea;
+  --color-primary-raw: 196, 145, 248;
+  --color-primary-dark-raw: 158, 70, 247;
+  --color-primary: rgb(var(--color-primary-raw));
+  --color-primary-dark: rgb(var(--color-primary-dark-raw));
+
   padding: 0;
   margin: 0;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  --font-family: Baloo, "sans-serif";
-  --font-family-body: Inter, "sans-serif";
-  --border-color: #eaeaea;
-  --color-primary: #a955ff;
 
   box-sizing: border-box;
   * {
