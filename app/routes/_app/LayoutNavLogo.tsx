@@ -24,10 +24,13 @@ const divStyles = css`
 `;
 
 export const LayoutNavLogo = forwardRef<HTMLDivElement, LayoutNavLogoProps>(
-  function LayoutNavLogo({ className, ...restProps }, ref) {
+  function LayoutNavLogo(
+    { className, dxLogoAlt, dxLogoUrl, ...restProps },
+    ref
+  ) {
     return (
       <div {...restProps} className={clsx(divStyles, className)} ref={ref}>
-        <img src="/directory-viz-logo-5-transparent.png" alt="logo" />
+        <img src={dxLogoUrl} alt={dxLogoAlt} />
       </div>
     );
   }

@@ -13,11 +13,39 @@ export type TabListItemNavLinkPropsCustom = {
 export type TabListItemNavLinkProps = TabListItemNavLinkPropsNative &
   TabListItemNavLinkPropsCustom;
 
-const spanStyles = css`
+const divStyles = css`
   padding: 0.25rem 1.5rem;
+  display: grid;
+  align-items: center;
+  height: 100%;
   font-size: 14px;
   font-weight: 500;
   font-family: var(--font-family-body);
+  color: var(--color-text-primary-dark);
+  transition: all 0.15s ease-in-out;
+
+  &:after {
+    content: "";
+    position: absolute;
+    height: 0;
+    transition: height 0.15s ease-in-out;
+  }
+
+  &.active {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+
+    &::after {
+      content: "";
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-primary-dark);
+    }
+  }
 `;
 
 const aStyles = css`
@@ -29,18 +57,12 @@ const aStyles = css`
   height: 3rem;
   display: grid;
   align-content: center;
-  border-bottom: 4px solid transparent;
   transition: all 0.15s ease-in-out;
+  position: relative;
   cursor: pointer;
-
-  &:has(.active) {
-    border-bottom: 4px solid var(--color-primary);
-    font-weight: 600;
-    color: var(--color-primary);
-  }
+  display: block;
 
   &:hover {
-    color: var(--color-primary);
   }
 `;
 
@@ -51,13 +73,13 @@ export const TabListItemNavLink = forwardRef<
   return (
     <NavLink {...restProps} className={clsx(aStyles, className)} ref={ref}>
       {({ isActive }) => (
-        <span
-          className={clsx(spanStyles, {
+        <div
+          className={clsx(divStyles, {
             active: isActive,
           })}
         >
           {children}
-        </span>
+        </div>
       )}
     </NavLink>
   );

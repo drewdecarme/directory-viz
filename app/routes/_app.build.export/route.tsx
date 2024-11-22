@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useDirectoryContext } from "../_app.build/Directory.context";
 
 function getCanvasContentArea(

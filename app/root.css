@@ -2,6 +2,9 @@
   --font-family: Baloo, "sans-serif";
   --font-family-body: Inter, "sans-serif";
   --border-color: #eaeaea;
+  --color-neutral: #fafafa;
+  --color-text-primary: #373737;
+  --color-text-secondary: #8d8d8d;
   --color-primary-raw: 196, 145, 248;
   --color-primary-dark-raw: 158, 70, 247;
   --color-primary: rgb(var(--color-primary-raw));
