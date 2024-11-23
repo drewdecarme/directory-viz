@@ -18,8 +18,10 @@ export const inputStylesBase = css`
   font-family: var(--font-family-body);
   border: 1px solid var(--color-neutral);
   transition: all 0.1s ease-in-out;
+  padding: 0;
 
-  &:focus {
+  &:focus,
+  &:focus-within {
     outline: none;
     border: 1px solid var(--color-primary-dark);
   }
@@ -28,7 +30,7 @@ export const inputStylesBase = css`
     &-sm {
       height: 24px;
       font-size: 12px;
-      padding: 0.25rem;
+      padding: 0 0.25rem;
     }
   }
 `;

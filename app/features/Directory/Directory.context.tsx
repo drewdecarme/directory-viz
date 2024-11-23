@@ -17,7 +17,14 @@ export const nodeFontFamilies = {
   Excalifont: "Excalifont, sans-serif",
   Inter: "Inter, sans-serf",
 };
+export const nodeFontWeights = {
+  Regular: 400,
+  Medium: 500,
+  "Semi-bold": 600,
+  Bold: 700,
+};
 export type NodeFontFamilyNames = keyof typeof nodeFontFamilies;
+export type NodeFontWeightNames = keyof typeof nodeFontWeights;
 
 export type GlobalOptions = {
   // node
@@ -25,9 +32,11 @@ export type GlobalOptions = {
   NODE_PADDING_BOTTOM: number;
   NODE_PADDING_LEFT: number;
   NODE_TEXT_PADDING_LEFT: number;
-  NODE_FONT_SIZE: number;
   NODE_NESTED_INDENT: number;
   NODE_FONT_FAMILY: NodeFontFamilyNames;
+  NODE_FONT_COLOR: string;
+  NODE_FONT_SIZE: number;
+  NODE_FONT_WEIGHT: NodeFontWeightNames;
   NODE_ICON_DIMENSION: number;
   // box
   BOX_PADDING_TOP: number;
@@ -47,6 +56,8 @@ export const globalOptionDefaults: GlobalOptions = {
   NODE_NESTED_INDENT: 30, // Indentation per depth
   // NODE_FONT_FAMILY: "Inter, sans-serif",
   NODE_FONT_FAMILY: "Excalifont",
+  NODE_FONT_WEIGHT: "Regular",
+  NODE_FONT_COLOR: "#000",
   NODE_ICON_DIMENSION: 24,
 
   BOX_PADDING_TOP: 0,
