@@ -4,7 +4,6 @@ import { PaneSectionRow } from "~/components/PaneSection/PaneSectionRow";
 import { InputColor } from "~/components/inputs/InputColor";
 import { InputNumber } from "~/components/inputs/InputNumber";
 import { InputSelect } from "~/components/inputs/InputSelect";
-import { InputText } from "~/components/inputs/InputText";
 import {
   nodeFontFamilies,
   nodeFontWeights,
@@ -46,9 +45,6 @@ export default function GlobalProperties() {
   return (
     <>
       <PaneSection dxTitle="Typography">
-        <PaneSectionRow>
-          <InputText dxSize="sm" />
-        </PaneSectionRow>
         {/* Font Family */}
         <PaneSectionRow>
           <InputSelect
@@ -96,7 +92,15 @@ export default function GlobalProperties() {
           />
         </PaneSectionRow>
       </PaneSection>
-      <PaneSection dxTitle="Iconography">icons</PaneSection>
+      <PaneSection dxTitle="Iconography">
+        {/* Icon Size */}
+        <InputNumber
+          dxSize="sm"
+          dxLabel="Icon Size"
+          onChange={handleChange("NODE_ICON_DIMENSION", "number")}
+          defaultValue={globalOptions.NODE_ICON_DIMENSION}
+        />
+      </PaneSection>
       <PaneSection dxTitle="Styles">
         <PaneSectionRow>
           <InputSelect dxSize="sm">
