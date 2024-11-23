@@ -227,11 +227,11 @@ function renderSceneManifest(
         break;
 
       case "node": {
-        const fontFamily = nodeFontFamilies[globalOptions.NODE_FONT_FAMILY];
-        console.log({ globalOptions, fontFamily });
         ctx.beginPath();
         ctx.fillStyle = "#000";
-        ctx.font = `${globalOptions.NODE_FONT_SIZE}px ${fontFamily}`;
+        ctx.font = `${globalOptions.NODE_FONT_SIZE}px ${
+          nodeFontFamilies[globalOptions.NODE_FONT_FAMILY]
+        }`;
         ctx.textBaseline = "middle";
         ctx.fillText(node.text, node.xText, node.yText);
 
