@@ -1,4 +1,7 @@
-import type { DirectoryGraph, DirectoryGraphNode } from "./Directory.context";
+import type {
+  DirectoryGraph,
+  DirectoryGraphNode,
+} from "../../features/Directory/Directory.context";
 
 const NUM_OF_SPACES = 4;
 export const INDENTATION = [...new Array(NUM_OF_SPACES)].reduce<string>(

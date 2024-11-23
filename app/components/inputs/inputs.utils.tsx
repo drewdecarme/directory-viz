@@ -6,6 +6,8 @@ export type InputBaseProps = {
    * The size of the input
    */
   dxSize: "sm" | "md" | "lg";
+  dxLabel?: string;
+  dxHelp?: string;
 };
 
 export const inputStylesBase = css`

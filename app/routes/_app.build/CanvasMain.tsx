@@ -7,12 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { type IconMap, type IconNames, useIcons } from "../../icons/useIcons";
 import {
   type DirectoryGraph,
   type DirectoryGraphNode,
+  type GlobalOptions,
+  nodeFontFamilies,
   useDirectoryContext,
-} from "./Directory.context";
+} from "../../features/Directory/Directory.context";
+import { type IconMap, type IconNames, useIcons } from "../../icons/useIcons";
 
 type SceneManifestEntryShared = {
   id: string;
@@ -45,28 +47,11 @@ type SceneManifestEntry = SceneManifestEntryNode | SceneManifestEntryBoundary;
 
 type SceneManifest = SceneManifestEntry[];
 
-// Constants for node dimensions
-const NODE_PADDING_TOP = 20;
-const NODE_PADDING_BOTTOM = 20;
-const NODE_PADDING_LEFT = 20;
-const NODE_TEXT_PADDING_LEFT = 10;
-const NODE_FONT_SIZE = 16;
-const NODE_NESTED_INDENT = 30; // Indentation per depth
-// const NODE_FONT_FAMILY = "Inter, sans-serif";
-const NODE_FONT_FAMILY = "Excalifont, sans-serif";
-const NODE_ICON_DIMENSION = 24;
-
-const BOX_PADDING_TOP = 0;
-const BOX_PADDING_RIGHT = 0;
-const BOX_PADDING_BOTTOM = 0;
-const BOX_PADDING_LEFT = 0;
-const BOX_RADIUS = 10;
-const BOX_WIDTH = 300;
-
 function translateToSceneManifest(
   graph: DirectoryGraph,
   canvasWidth: number,
   canvasHeight: number,
+  globalOptions: GlobalOptions,
   depth = 0
 ): SceneManifest {
   let currentY = 0;
@@ -80,20 +65,23 @@ function translateToSceneManifest(
   ): SceneManifestEntryNode => {
     maxDepth = Math.max(maxDepth, depth);
 
-    const nodeXIndent = depth * NODE_NESTED_INDENT;
-    const nodeXIcon = NODE_PADDING_LEFT + nodeXIndent; // the indentation of the line it's on
+    const nodeXIndent = depth * globalOptions.NODE_NESTED_INDENT;
+    const nodeXIcon = globalOptions.NODE_PADDING_LEFT + nodeXIndent; // the indentation of the line it's on
     const nodeXText =
       nodeXIcon + // the amount of padding it should be away from that indent
-      NODE_ICON_DIMENSION + // the width of the icon
-      NODE_TEXT_PADDING_LEFT; // the amount of space between the icon and the text;
+      globalOptions.NODE_ICON_DIMENSION + // the width of the icon
+      globalOptions.NODE_TEXT_PADDING_LEFT; // the amount of space between the icon and the text;
 
     console.log({ nodeXIndent, nodeXIcon, nodeXText });
 
-    const nodeWith = BOX_WIDTH - nodeXIndent;
+    const nodeWith = globalOptions.BOX_WIDTH - nodeXIndent;
 
-    const nodeHeight = NODE_PADDING_BOTTOM + NODE_FONT_SIZE + NODE_PADDING_TOP;
+    const nodeHeight =
+      globalOptions.NODE_PADDING_BOTTOM +
+      globalOptions.NODE_FONT_SIZE +
+      globalOptions.NODE_PADDING_TOP;
     const nodeYText = currentY + nodeHeight / 2;
-    const nodeYIcon = nodeYText - NODE_ICON_DIMENSION / 2;
+    const nodeYIcon = nodeYText - globalOptions.NODE_ICON_DIMENSION / 2;
     const nodeChildrenValues = Object.values(node.childNodes);
 
     function getIconType(): IconNames {
@@ -139,7 +127,7 @@ function translateToSceneManifest(
     sceneManifest.push(traverseSceneManifestEntryNodes(sceneEntryNode, depth));
   }
 
-  const totalWidth = BOX_WIDTH;
+  const totalWidth = globalOptions.BOX_WIDTH;
   const totalHeight = currentY;
 
   // Calculate the offsets to center the graph
@@ -152,10 +140,15 @@ function translateToSceneManifest(
   sceneManifest.unshift({
     type: "boundary",
     id: "bounded-box",
-    x: firstEntryNode.x - BOX_PADDING_LEFT,
-    width: totalWidth + BOX_PADDING_LEFT + BOX_PADDING_RIGHT,
-    y: firstEntryNode.y - BOX_PADDING_TOP,
-    height: totalHeight + BOX_PADDING_TOP * BOX_PADDING_BOTTOM,
+    x: firstEntryNode.x - globalOptions.BOX_PADDING_LEFT,
+    width:
+      totalWidth +
+      globalOptions.BOX_PADDING_LEFT +
+      globalOptions.BOX_PADDING_RIGHT,
+    y: firstEntryNode.y - globalOptions.BOX_PADDING_TOP,
+    height:
+      totalHeight +
+      globalOptions.BOX_PADDING_TOP * globalOptions.BOX_PADDING_BOTTOM,
     meta: {
       isLastNode: false,
     },
@@ -201,7 +194,8 @@ function translateToSceneManifest(
 function renderSceneManifest(
   ctx: CanvasRenderingContext2D,
   sceneManifest: SceneManifest,
-  iconMap: IconMap
+  iconMap: IconMap,
+  globalOptions: GlobalOptions
 ): void {
   let boundaryX = 0;
 
@@ -214,7 +208,13 @@ function renderSceneManifest(
         ctx.shadowColor = "#919191";
         ctx.shadowBlur = 10;
         boundaryX = node.x;
-        ctx.roundRect(node.x, node.y, node.width, node.height, BOX_RADIUS);
+        ctx.roundRect(
+          node.x,
+          node.y,
+          node.width,
+          node.height,
+          globalOptions.BOX_RADIUS
+        );
         ctx.fill();
 
         // Reset shadow properties to prevent them from affecting the stroke
@@ -227,9 +227,11 @@ function renderSceneManifest(
         break;
 
       case "node": {
+        const fontFamily = nodeFontFamilies[globalOptions.NODE_FONT_FAMILY];
+        console.log({ globalOptions, fontFamily });
         ctx.beginPath();
         ctx.fillStyle = "#000";
-        ctx.font = `${NODE_FONT_SIZE}px ${NODE_FONT_FAMILY}`;
+        ctx.font = `${globalOptions.NODE_FONT_SIZE}px ${fontFamily}`;
         ctx.textBaseline = "middle";
         ctx.fillText(node.text, node.xText, node.yText);
 
@@ -243,15 +245,15 @@ function renderSceneManifest(
           icon?.img,
           node.xIcon,
           node.yIcon,
-          NODE_ICON_DIMENSION,
-          NODE_ICON_DIMENSION
+          globalOptions.NODE_ICON_DIMENSION,
+          globalOptions.NODE_ICON_DIMENSION
         );
 
         // Create the horizontal lines
         if (!node.meta.isLastNode) {
           ctx.beginPath();
           ctx.moveTo(boundaryX, node.y + node.height); // Start at the bottom-left corner of the rectangle
-          ctx.lineTo(boundaryX + BOX_WIDTH, node.y + node.height); // Draw a line to the bottom-right corner
+          ctx.lineTo(boundaryX + globalOptions.BOX_WIDTH, node.y + node.height); // Draw a line to the bottom-right corner
           ctx.strokeStyle = "#cbcbcb40";
           ctx.lineWidth = 1;
           ctx.stroke();
@@ -277,7 +279,7 @@ const canvasStyles = css`
 
 export function CanvasMain() {
   const { getIcons } = useIcons();
-  const { graph, canvasRef } = useDirectoryContext();
+  const { graph, canvasRef, globalOptions } = useDirectoryContext();
   const [container, setContainerDim] = useState<
     { height: number; width: number } | undefined
   >(undefined);
@@ -341,7 +343,8 @@ export function CanvasMain() {
       const sceneManifest = translateToSceneManifest(
         graph,
         container.width,
-        container.height
+        container.height,
+        globalOptions
       );
 
       context.save();
@@ -355,13 +358,22 @@ export function CanvasMain() {
       context.scale(scale, scale);
 
       // draw the diagram onto the canvas
-      renderSceneManifest(context, sceneManifest, iconMap);
+      renderSceneManifest(context, sceneManifest, iconMap, globalOptions);
 
       context.restore();
     }
 
     draw();
-  }, [canvasRef, container, getIcons, graph, offset.x, offset.y, scale]);
+  }, [
+    canvasRef,
+    container,
+    getIcons,
+    globalOptions,
+    graph,
+    offset.x,
+    offset.y,
+    scale,
+  ]);
 
   const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>(
     (e) => {

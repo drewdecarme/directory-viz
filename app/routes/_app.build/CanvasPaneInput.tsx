@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { LayoutPaneHeader } from "~/routes/_app/LayoutPaneHeader";
-import { useDirectoryContext } from "./Directory.context";
+import { useDirectoryContext } from "../../features/Directory/Directory.context";
 import {
   INDENTATION,
   buildDirectoryGraphFromTextarea,

@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { useDirectoryContext } from "../_app.build/Directory.context";
+import { useDirectoryContext } from "../../features/Directory/Directory.context";
 
 function getCanvasContentArea(
   context: CanvasRenderingContext2D,
