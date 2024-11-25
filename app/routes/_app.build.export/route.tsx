@@ -1,4 +1,7 @@
 import { useCallback, useRef } from "react";
+import { PaneSection } from "~/components/PaneSection";
+import { PaneSectionRow } from "~/components/PaneSection/PaneSectionRow";
+import { InputNumber } from "~/components/inputs/InputNumber";
 import { useDirectoryContext } from "../../features/Directory/Directory.context";
 
 function getCanvasContentArea(
@@ -79,11 +82,28 @@ export default function Export() {
 
   return (
     <div>
-      <div>export</div>
-      <button onClick={createPreview} type="button">
-        View Preview
-      </button>
-      <canvas ref={previewCanvasRef} />
+      <PaneSection dxTitle="Configure">
+        <PaneSectionRow style={{ fontSize: 10 }}>
+          Use the controls below to configure the desired export for the
+          directory diagram. Click the generate button to re-generate the image.
+        </PaneSectionRow>
+        <PaneSectionRow>
+          <InputNumber
+            dxLabel="Padding"
+            dxHelp="Add uniform space around the preview that includes the background."
+            defaultValue={20}
+            dxSize="sm"
+          />
+        </PaneSectionRow>
+        <PaneSectionRow>
+          <button onClick={createPreview} type="button">
+            Generate
+          </button>
+        </PaneSectionRow>
+        <PaneSectionRow>
+          <canvas ref={previewCanvasRef} />
+        </PaneSectionRow>
+      </PaneSection>
     </div>
   );
 }
