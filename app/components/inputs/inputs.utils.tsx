@@ -35,8 +35,12 @@ export const inputStylesBase = css`
   }
 `;
 
-export function createBaseInputStyles<T extends InputBaseProps>(props: T) {
-  return clsx(inputStylesBase, {
+export function createBaseInputSizes<T extends InputBaseProps>(props: T) {
+  return clsx({
     "s-sm": props.dxSize,
   });
+}
+
+export function createBaseInputStyles<T extends InputBaseProps>(props: T) {
+  return clsx(inputStylesBase, createBaseInputSizes(props));
 }
