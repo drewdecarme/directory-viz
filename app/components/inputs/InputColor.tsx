@@ -5,6 +5,7 @@ import {
   type RefCallback,
   forwardRef,
   useCallback,
+  useId,
   useRef,
 } from "react";
 import { InputContainer } from "./InputContainer";
@@ -87,6 +88,7 @@ export const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
   function InputColor({ dxLabel, className, onChange, ...props }, ref) {
     const textRef = useRef<HTMLInputElement | null>(null);
     const colorRef = useRef<HTMLInputElement | null>(null);
+    const id = useId();
 
     const setColorRef = useCallback<RefCallback<HTMLInputElement>>(
       (node) => {
@@ -119,11 +121,16 @@ export const InputColor = forwardRef<HTMLInputElement, InputColorProps>(
 
     return (
       <InputContainer>
-        {dxLabel && <InputLabel dxSize={props.dxSize}>{dxLabel}</InputLabel>}
+        {dxLabel && (
+          <InputLabel dxSize={props.dxSize} htmlFor={id}>
+            {dxLabel}
+          </InputLabel>
+        )}
         <div
           className={clsx(createBaseInputStyles(props), className, divStyles)}
         >
           <input
+            id={id}
             type="color"
             {...props}
             ref={setColorRef}

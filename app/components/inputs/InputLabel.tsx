@@ -12,6 +12,7 @@ export type InputLabelProps = InputLabelPropsNative & InputLabelPropsCustom;
 
 const labelStyles = css`
   font-family: var(--font-family-body);
+  display: inline-block;
 
   &.s {
     &-sm {

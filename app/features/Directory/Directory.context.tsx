@@ -45,6 +45,8 @@ export type GlobalOptions = {
   BOX_PADDING_LEFT: number;
   BOX_RADIUS: number;
   BOX_WIDTH: number;
+  // CANVAS
+  CANVAS_BACKGROUND_COLOR: string;
 };
 
 export const globalOptionDefaults: GlobalOptions = {
@@ -55,7 +57,7 @@ export const globalOptionDefaults: GlobalOptions = {
   NODE_FONT_SIZE: 16,
   NODE_NESTED_INDENT: 30, // Indentation per depth
   // NODE_FONT_FAMILY: "Inter, sans-serif",
-  NODE_FONT_FAMILY: "Excalifont",
+  NODE_FONT_FAMILY: "Inter",
   NODE_FONT_WEIGHT: "Regular",
   NODE_FONT_COLOR: "#000",
   NODE_ICON_DIMENSION: 24,
@@ -66,6 +68,7 @@ export const globalOptionDefaults: GlobalOptions = {
   BOX_PADDING_LEFT: 0,
   BOX_RADIUS: 10,
   BOX_WIDTH: 300,
+  CANVAS_BACKGROUND_COLOR: "#fafafa",
 };
 
 type DirectoryContextType = {

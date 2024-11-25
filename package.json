@@ -16,6 +16,7 @@
     "@buttery/cli": "^0.4.0",
     "@buttery/components": "^0.1.3",
     "@buttery/icons": "^0.1.5",
+    "@linaria/react": "^6.2.1",
     "@remix-run/node": "^2.13.1",
     "@remix-run/react": "^2.13.1",
     "@remix-run/serve": "^2.13.1",

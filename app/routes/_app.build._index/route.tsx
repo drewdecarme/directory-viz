@@ -9,6 +9,7 @@ import {
   nodeFontWeights,
   useDirectoryContext,
 } from "~/features/Directory/Directory.context";
+import { NodeDiagram } from "./NodeDiagram";
 
 export default function GlobalProperties() {
   const { setGlobalOptions, globalOptions } = useDirectoryContext();
@@ -44,6 +45,9 @@ export default function GlobalProperties() {
 
   return (
     <>
+      <PaneSection dxTitle="Layout">
+        <NodeDiagram />
+      </PaneSection>
       <PaneSection dxTitle="Typography">
         {/* Font Family */}
         <PaneSectionRow>
@@ -101,11 +105,17 @@ export default function GlobalProperties() {
           defaultValue={globalOptions.NODE_ICON_DIMENSION}
         />
       </PaneSection>
-      <PaneSection dxTitle="Styles">
+      <PaneSection dxTitle="Canvas">
         <PaneSectionRow>
-          <InputSelect dxSize="sm">
-            <option>test</option>
-          </InputSelect>
+          {/* Background Color */}
+          <InputColor
+            dxSize="sm"
+            dxLabel="Background Color"
+            onChange={handleChange("CANVAS_BACKGROUND_COLOR", "string")}
+            defaultValue={globalOptions.CANVAS_BACKGROUND_COLOR}
+          />
+          {/* Background Pattern */}
+          {/* TODO: Need to add dropdown support here */}
         </PaneSectionRow>
       </PaneSection>
     </>
