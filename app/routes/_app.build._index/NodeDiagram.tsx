@@ -12,28 +12,29 @@ const NodeGrid = styled("div")`
     "n-pad-bot    n-pad-bot  n-pad-bot   n-pad-bot";
   grid-template-columns: auto auto auto 1fr;
 
-  & > button {
-    border: none;
-    margin: 0;
-    border: 1px solid white;
-    background: var(--color-neutral);
-    padding: 0.5rem;
-    transition: all 0.1s ease-in-out;
+  & > * {
     font-size: 10px;
-    &:not(.ignore) {
-      &:hover,
-      &:focus,
-      &.active {
+    padding: 0.5rem;
+    border: 1px solid white;
+  }
+
+  & > button {
+    margin: 0;
+    background: var(--color-neutral);
+    transition: all 0.1s ease-in-out;
+
+    &:hover,
+    &:focus,
+    &.active {
+      background-color: rgba(var(--color-primary-raw), 0.2);
+      color: var(--color-primary-dark);
+      border-color: var(--color-primary-dark);
+      z-index: 10;
+    }
+    &:hover {
+      &:not(.active) {
+        border: 1px solid white;
         background-color: rgba(var(--color-primary-raw), 0.2);
-        color: var(--color-primary-dark);
-        border-color: var(--color-primary-dark);
-        z-index: 10;
-      }
-      &:hover {
-        &:not(.active) {
-          border: 1px solid white;
-          background-color: rgba(var(--color-primary-raw), 0.2);
-        }
       }
     }
   }
@@ -61,7 +62,7 @@ const IconWidth = styled("button")`
 const TextPaddingLeft = styled("button")`
   grid-area: t-pad-left;
 `;
-const TextWidth = styled("button")`
+const TextWidth = styled("div")`
   grid-area: t-width;
   background: white !important;
 `;
@@ -89,10 +90,7 @@ export function NodeDiagram() {
           setSelectedOption({ value, label });
           inputRef.current?.focus();
         },
-        onFocus: () => {
-          setSelectedOption({ value, label });
-          inputRef.current?.focus();
-        },
+        onFocus: () => setSelectedOption({ value, label }),
         className: selectedOption?.value === value ? "active" : undefined,
       };
     },
@@ -115,14 +113,14 @@ export function NodeDiagram() {
         }}
       >
         <b>Node Value:&nbsp;</b>
-        <span>{hoveredValue}</span>
+        <span>{(hoveredValue || selectedOption?.label) ?? undefined}</span>
       </PaneSectionRow>
       <PaneSectionRow>
         <NodeGrid onMouseLeave={() => setHoveredValue("")}>
           <NodePaddingTop
-            {...createButtonProps("NODE_PADDING_TOP", "Padding Top")}
+            {...createButtonProps("NODE_PADDING_VERTICAL", "Padding Vertical")}
           >
-            {globalOptions.NODE_PADDING_TOP}
+            {globalOptions.NODE_PADDING_VERTICAL}
           </NodePaddingTop>
           <NodePaddingLeft
             {...createButtonProps("NODE_PADDING_LEFT", "Padding Left")}
@@ -144,9 +142,9 @@ export function NodeDiagram() {
           </TextPaddingLeft>
           <TextWidth className="ignore">File / Folder Text</TextWidth>
           <NodePaddingBottom
-            {...createButtonProps("NODE_PADDING_BOTTOM", "Padding Bottom")}
+            {...createButtonProps("NODE_PADDING_VERTICAL", "Padding Vertical")}
           >
-            {globalOptions.NODE_PADDING_BOTTOM}
+            {globalOptions.NODE_PADDING_VERTICAL}
           </NodePaddingBottom>
         </NodeGrid>
       </PaneSectionRow>
@@ -155,6 +153,11 @@ export function NodeDiagram() {
           ref={inputRef}
           dxLabel={selectedOption?.label ?? "Nothing Selected"}
           disabled={!selectedOption?.value}
+          value={
+            selectedOption?.value
+              ? globalOptions[selectedOption.value]
+              : undefined
+          }
           onChange={({ currentTarget: { value } }) => {
             if (!selectedOption?.value) return;
             setGlobalOptions((draft) => {

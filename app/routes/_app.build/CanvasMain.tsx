@@ -77,9 +77,9 @@ function translateToSceneManifest(
     const nodeWith = globalOptions.BOX_WIDTH - nodeXIndent;
 
     const nodeHeight =
-      globalOptions.NODE_PADDING_BOTTOM +
+      globalOptions.NODE_PADDING_VERTICAL +
       globalOptions.NODE_FONT_SIZE +
-      globalOptions.NODE_PADDING_TOP;
+      globalOptions.NODE_PADDING_VERTICAL;
     const nodeYText = currentY + nodeHeight / 2;
     const nodeYIcon = nodeYText - globalOptions.NODE_ICON_DIMENSION / 2;
     const nodeChildrenValues = Object.values(node.childNodes);

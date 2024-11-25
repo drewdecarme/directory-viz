@@ -28,8 +28,7 @@ export type NodeFontWeightNames = keyof typeof nodeFontWeights;
 
 export type GlobalOptions = {
   // node
-  NODE_PADDING_TOP: number;
-  NODE_PADDING_BOTTOM: number;
+  NODE_PADDING_VERTICAL: number;
   NODE_PADDING_LEFT: number;
   NODE_TEXT_PADDING_LEFT: number;
   NODE_NESTED_INDENT: number;
@@ -50,8 +49,7 @@ export type GlobalOptions = {
 };
 
 export const globalOptionDefaults: GlobalOptions = {
-  NODE_PADDING_TOP: 20,
-  NODE_PADDING_BOTTOM: 20,
+  NODE_PADDING_VERTICAL: 20,
   NODE_PADDING_LEFT: 20,
   NODE_TEXT_PADDING_LEFT: 10,
   NODE_FONT_SIZE: 16,
