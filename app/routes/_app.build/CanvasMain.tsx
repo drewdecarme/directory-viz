@@ -377,9 +377,7 @@ export function CanvasMain() {
 
   const handleWheel = useCallback<WheelEventHandler<HTMLCanvasElement>>(
     (e) => {
-      if (!e.metaKey) return;
       if (!canvasRef.current) return;
-
       const ctx = canvasRef.current.getContext("2d");
       if (!ctx) return;
 
@@ -392,18 +390,27 @@ export function CanvasMain() {
       const canvasX = (mouseX - offset.x) / scale;
       const canvasY = (mouseY - offset.y) / scale;
 
-      // Determine zoom factor
-      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      // Move the while while holding down command
+      if (e.metaKey) {
+        // Determine zoom factor
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
 
-      // Update scale
-      const newScale = scale * zoomFactor;
-      setScale(newScale);
+        // Update scale
+        const newScale = scale * zoomFactor;
+        setScale(newScale);
 
-      // Adjust offsets to keep the cursor as the zoom origin
-      setOffset({
-        x: mouseX - canvasX * newScale,
-        y: mouseY - canvasY * newScale,
-      });
+        // Adjust offsets to keep the cursor as the zoom origin
+        setOffset({
+          x: mouseX - canvasX * newScale,
+          y: mouseY - canvasY * newScale,
+        });
+        return;
+      }
+
+      setOffset((prevOffset) => ({
+        x: prevOffset.x - e.deltaX,
+        y: prevOffset.y - e.deltaY,
+      }));
     },
     [canvasRef, offset.x, offset.y, scale]
   );

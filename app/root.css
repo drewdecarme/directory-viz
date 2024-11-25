@@ -10,3 +10,8 @@
   --color-primary: rgb(var(--color-primary-raw));
   --color-primary-dark: rgb(var(--color-primary-dark-raw));
 }
+
+html,
+body {
+  overscroll-behavior-x: contain;
+}
