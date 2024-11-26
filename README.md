@@ -9,3 +9,4 @@
 - configure color font etc...
 - high resolutions
 - Change icons
+- advanced export

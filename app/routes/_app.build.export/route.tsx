@@ -4,6 +4,7 @@ import { PaneSection } from "~/components/PaneSection";
 import { PaneSectionRow } from "~/components/PaneSection/PaneSectionRow";
 import { InputCheckbox } from "~/components/inputs/InputCheckbox";
 import { InputNumber } from "~/components/inputs/InputNumber";
+import { InputSelect } from "~/components/inputs/InputSelect";
 import { useDirectoryContext } from "../../features/Directory/Directory.context";
 
 function getCanvasContentArea(
@@ -67,6 +68,7 @@ function getCanvasContentArea(
 const previewCanvasStyles = css`
   width: 100%;
   height: 400px;
+  border: 1px solid var(--color-neutral);
 `;
 
 export default function Export() {
@@ -75,15 +77,17 @@ export default function Export() {
     globalOptions: { CANVAS_BACKGROUND_COLOR },
   } = useDirectoryContext();
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const anchorRef = useRef<HTMLAnchorElement | null>(null);
   const [showBackground, setShowBackground] = useState(false);
-  const [padding, setPadding] = useState(0);
+  const [padding, setPadding] = useState(50);
+  const [exportScale, setExportScale] = useState(1);
 
   const createPreview = useCallback(() => {
     const canvas = canvasRef.current;
     const previewCanvas = previewCanvasRef.current;
     if (!canvas || !previewCanvas) return;
 
-    // get the context
+    // Get the contexts
     const ctx = canvas.getContext("2d");
     const previewCtx = previewCanvas.getContext("2d");
     if (!ctx || !previewCtx) return;
@@ -110,6 +114,16 @@ export default function Export() {
       dWidth = maxHeight * aspectRatio;
     }
 
+    // Handle device pixel ratio for sharp rendering
+    const dpr = 3;
+
+    // Set the internal resolution of the preview canvas
+    previewCanvas.width = maxWidth * dpr;
+    previewCanvas.height = maxHeight * dpr;
+
+    // Scale the context for high DPI
+    previewCtx.scale(dpr, dpr);
+
     // Calculate offsets for centering
     const offsetX = (maxWidth - dWidth) / 2;
     const offsetY = (maxHeight - dHeight) / 2;
@@ -117,10 +131,13 @@ export default function Export() {
     // Clear the canvas before drawing
     previewCtx.clearRect(0, 0, maxWidth, maxHeight);
 
-    // Draw the snippet on the preview canvas
-    previewCanvas.width = maxWidth;
-    previewCanvas.height = maxHeight;
+    // Draw the background if enabled
+    if (showBackground) {
+      previewCtx.fillStyle = CANVAS_BACKGROUND_COLOR;
+      previewCtx.fillRect(0, 0, maxWidth, maxHeight);
+    }
 
+    // Draw the content area of the main canvas onto the preview canvas
     previewCtx.drawImage(
       canvas,
       contentArea.x,
@@ -132,7 +149,33 @@ export default function Export() {
       dWidth,
       dHeight
     );
-  }, [canvasRef, padding]);
+  }, [CANVAS_BACKGROUND_COLOR, canvasRef, padding, showBackground]);
+
+  const download = useCallback(() => {
+    if (!previewCanvasRef.current || !anchorRef.current) return;
+
+    // Create an offscreen canvas
+    const exportCanvas = document.createElement("canvas");
+    const exportCtx = exportCanvas.getContext("2d");
+    if (!exportCtx) return;
+
+    const scale = exportScale * window.devicePixelRatio || 1;
+
+    // Set the scaled canvas size
+    exportCanvas.width = previewCanvasRef.current.width * scale;
+    exportCanvas.height = previewCanvasRef.current.height * scale;
+
+    // Scale the context and draw the original canvas onto it
+    exportCtx.scale(scale, scale);
+    exportCtx.drawImage(previewCanvasRef.current, 0, 0);
+
+    console.log(exportCtx);
+
+    const dataURL = exportCanvas.toDataURL("image/png");
+    anchorRef.current.href = dataURL;
+    anchorRef.current.download = `directory-viz-export-${exportScale}x.png`;
+    anchorRef.current.click();
+  }, [exportScale]);
 
   return (
     <div>
@@ -143,43 +186,57 @@ export default function Export() {
         </PaneSectionRow>
         <PaneSectionRow>
           <InputCheckbox
-            dxLabel="Show background"
+            dxLabel="Include background"
             dxSize="sm"
             onClick={({ currentTarget: { checked } }) =>
               setShowBackground(checked)
             }
           />
         </PaneSectionRow>
-        {showBackground && (
-          <PaneSectionRow>
-            <InputNumber
-              dxLabel="Padding"
-              dxHelp="Add uniform space around the preview that includes the background."
-              value={padding}
-              min={0}
-              max={100}
-              onChange={({ currentTarget: { value } }) =>
-                setPadding(Number(value))
-              }
-              dxSize="sm"
-            />
-          </PaneSectionRow>
-        )}
         <PaneSectionRow>
-          <button onClick={createPreview} type="button">
-            Generate
-          </button>
+          <InputSelect
+            dxLabel="Resolution Scale"
+            dxHelp="Choose export resolution: Standard (1x), Retina (2x), Ultra HD (3x)"
+            dxSize="sm"
+            value={exportScale}
+            onChange={({ currentTarget: { value } }) =>
+              setExportScale(Number(value))
+            }
+          >
+            <option value={1}>1x</option>
+            <option value={2}>2x</option>
+            <option value={3}>3x</option>
+          </InputSelect>
         </PaneSectionRow>
         <PaneSectionRow>
-          <canvas
-            ref={previewCanvasRef}
-            className={previewCanvasStyles}
-            style={
-              showBackground
-                ? { background: CANVAS_BACKGROUND_COLOR }
-                : undefined
+          <InputNumber
+            dxLabel="Background Padding"
+            dxHelp="Add uniform space around the preview that includes the background."
+            value={padding}
+            min={0}
+            max={100}
+            onChange={({ currentTarget: { value } }) =>
+              setPadding(Number(value))
             }
+            dxSize="sm"
           />
+        </PaneSectionRow>
+        <PaneSectionRow>
+          <button onClick={createPreview} type="button">
+            Generate Preview
+          </button>
+          <button onClick={download} type="button">
+            Export
+          </button>
+          <a ref={anchorRef} style={{ display: "none" }} href="/">
+            Download Image
+          </a>
+        </PaneSectionRow>
+      </PaneSection>
+
+      <PaneSection dxTitle="Preview">
+        <PaneSectionRow>
+          <canvas ref={previewCanvasRef} className={previewCanvasStyles} />
         </PaneSectionRow>
       </PaneSection>
     </div>
