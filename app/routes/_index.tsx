@@ -1,5 +1,7 @@
 import { css } from "@linaria/core";
 import type { MetaFunction } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
+import { Button } from "~/components/Button";
 
 export const meta: MetaFunction = () => {
   return [
@@ -49,27 +51,56 @@ const divStyles = css`
       img {
         width: 100%;
         height: 100%;
-        border-radius: 1rem;
+        border-radius: 0.5rem;
         object-fit: contain;
       }
     }
   }
 `;
 
+const headerStyles = css`
+  display: flex;
+  height: 4rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+
+  img {
+    height: 60%;
+    width: auto;
+  }
+`;
+
 export default function Index() {
+  const go = useNavigate();
   return (
-    <div className={divStyles}>
-      <div>
-        <h1>Create stunning visualizations of your directories.</h1>
-        <p>
-          Donec ullamcorper nulla non metus auctor fringilla. Aenean lacinia
-          bibendum nulla sed consectetur
-        </p>
+    <>
+      <header className={headerStyles}>
+        <img src="/directory-viz-logo-5-transparent.png" alt="logo" />
+        <div>
+          <Button
+            dxSize="sm"
+            dxColor="primary"
+            dxVariant="contained"
+            onClick={() => go("/build")}
+          >
+            Start Building
+          </Button>
+        </div>
+      </header>
+      <div className={divStyles}>
+        <div>
+          <h1>Create stunning visualizations of your directories.</h1>
+          <p>
+            Donec ullamcorper nulla non metus auctor fringilla. Aenean lacinia
+            bibendum nulla sed consectetur
+          </p>
+        </div>
+        <div>
+          {/* <img src="/hero.webp" alt="hero" className={bgStyles} /> */}
+          <img src="/app-screenshot-3.png" alt="hero" className={bgStyles} />
+        </div>
       </div>
-      <div>
-        {/* <img src="/hero.webp" alt="hero" className={bgStyles} /> */}
-        <img src="/hero.webp" alt="hero" className={bgStyles} />
-      </div>
-    </div>
+    </>
   );
 }
