@@ -1,5 +1,6 @@
 import { css } from "@linaria/core";
 import { useCallback, useRef, useState } from "react";
+import { Button } from "~/components/Button";
 import { PaneSection } from "~/components/PaneSection";
 import { PaneSectionRow } from "~/components/PaneSection/PaneSectionRow";
 import { InputCheckbox } from "~/components/inputs/InputCheckbox";
@@ -69,6 +70,12 @@ const previewCanvasStyles = css`
   width: 100%;
   height: 400px;
   border: 1px solid var(--color-neutral);
+`;
+
+const footerStyles = css`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 `;
 
 export default function Export() {
@@ -222,12 +229,26 @@ export default function Export() {
           />
         </PaneSectionRow>
         <PaneSectionRow>
-          <button onClick={createPreview} type="button">
-            Generate Preview
-          </button>
-          <button onClick={download} type="button">
-            Export
-          </button>
+          <div className={footerStyles}>
+            <Button
+              dxSize="sm"
+              dxColor="primary"
+              dxVariant="outlined"
+              onClick={createPreview}
+              type="button"
+            >
+              Generate Preview
+            </Button>
+            <Button
+              dxSize="sm"
+              dxColor="primary"
+              dxVariant="contained"
+              onClick={download}
+              type="button"
+            >
+              Export
+            </Button>
+          </div>
           <a ref={anchorRef} style={{ display: "none" }} href="/">
             Download Image
           </a>
