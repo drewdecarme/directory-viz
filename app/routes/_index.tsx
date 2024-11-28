@@ -5,8 +5,12 @@ import { Button } from "~/components/Button";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "DirectoryViz" },
+    {
+      name: "description",
+      content:
+        "Convert simple indented text into beautiful & customizable images of your directory structures & hierarchies",
+    },
   ];
 };
 
@@ -120,7 +124,7 @@ export default function Index() {
   return (
     <>
       <header className={headerStyles}>
-        <img src="/directory-viz-logo-5-transparent.png" alt="logo" />
+        <img src="/images/directory-viz-logo-5-transparent.png" alt="logo" />
         <div>
           <Button
             dxSize="sm"
@@ -160,7 +164,7 @@ export default function Index() {
         <div className={mainStyle}>
           <div>
             <div>
-              <img src="/app-screenshot-empty.png" alt="home" />
+              <img src="/images/app-screenshot-empty.png" alt="home" />
             </div>
           </div>
           <div>next contnet</div>

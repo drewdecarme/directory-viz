@@ -444,7 +444,7 @@ export function CanvasMain() {
   if (Object.keys(graph).length === 0) {
     return (
       <div className={divStyles}>
-        <img src="/directory-viz-logo-hover.png" alt="empty" />
+        <img src="/images/directory-viz-logo-hover.png" alt="empty" />
         <h2>Nothing here!</h2>
         <p>Start typing in the window your left and I&apos;ll disappear!</p>
       </div>

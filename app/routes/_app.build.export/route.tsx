@@ -68,7 +68,7 @@ function getCanvasContentArea(
 
 const previewCanvasStyles = css`
   width: 100%;
-  height: 400px;
+  aspect-ratio: 1 / 1;
   border: 1px solid var(--color-neutral);
 `;
 

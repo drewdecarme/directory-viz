@@ -21,7 +21,7 @@ export default function App() {
         <LayoutNavSection>
           <Link to="/">
             <LayoutNavLogo
-              dxLogoUrl="/directory-viz-logo-5-transparent.png"
+              dxLogoUrl="/images/directory-viz-logo-5-transparent.png"
               dxLogoAlt="logo"
             />
           </Link>

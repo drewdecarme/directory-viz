@@ -1,4 +1,4 @@
-import { Outlet } from "@remix-run/react";
+import { type MetaFunction, Outlet } from "@remix-run/react";
 import { TabList } from "~/components/Tabs/TabList";
 import { TabListItem } from "~/components/Tabs/TabListItem";
 import { TabListItemNavLink } from "~/components/Tabs/TabListItemNavLink";
@@ -10,6 +10,17 @@ import { CanvasMain } from "~/routes/_app.build/CanvasMain";
 import { CanvasPaneInput } from "~/routes/_app.build/CanvasPaneInput";
 import { LayoutPaneHeader } from "~/routes/_app/LayoutPaneHeader";
 import { DirectoryProvider } from "../../features/Directory/Directory.context";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "DirectoryViz | Builder" },
+    {
+      name: "description",
+      content:
+        "Create, build, visualize, tweak, configure and export your directory visualization.",
+    },
+  ];
+};
 
 export default function Build() {
   return (
