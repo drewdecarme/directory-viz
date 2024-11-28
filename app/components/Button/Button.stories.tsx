@@ -24,8 +24,8 @@ export const ContainedSecondarySmall: Story = {
     dxVariant: "contained",
     dxColor: "secondary",
     dxSize: "sm",
-    children: "Get Started"
-  }
+    children: "Get Started",
+  },
 };
 
 export const ContainedPrimaryMedium: Story = {
@@ -33,8 +33,8 @@ export const ContainedPrimaryMedium: Story = {
     dxVariant: "contained",
     dxColor: "primary",
     dxSize: "md",
-    children: "Get Started"
-  }
+    children: "Get Started",
+  },
 };
 
 export const ContainedPrimaryLarge: Story = {
@@ -42,6 +42,27 @@ export const ContainedPrimaryLarge: Story = {
     dxVariant: "contained",
     dxColor: "primary",
     dxSize: "lg",
-    children: "Get Started"
-  }
+    children: "Get Started",
+  },
+};
+
+export const IconSmall: Story = {
+  args: {
+    dxVariant: "icon",
+    dxSize: "sm",
+  },
+};
+
+export const IconMedium: Story = {
+  args: {
+    dxVariant: "icon",
+    dxSize: "md",
+  },
+};
+
+export const IconLarge: Story = {
+  args: {
+    dxVariant: "icon",
+    dxSize: "lg",
+  },
 };

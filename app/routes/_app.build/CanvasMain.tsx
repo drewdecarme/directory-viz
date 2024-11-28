@@ -15,6 +15,7 @@ import {
   useDirectoryContext,
 } from "../../features/Directory/Directory.context";
 import { type IconMap, type IconNames, useIcons } from "../../icons/useIcons";
+import { CanvasMainToolbar } from "./CanvasMainToolbar";
 
 type SceneManifestEntryShared = {
   id: string;
@@ -275,6 +276,7 @@ function renderSceneManifest(
 const canvasStyles = css`
   height: 100%;
   width: 100%;
+  position: relative;
 `;
 
 const divStyles = css`
@@ -453,6 +455,7 @@ export function CanvasMain() {
 
   return (
     <div className={canvasStyles} ref={containerRefCallback}>
+      <CanvasMainToolbar />
       {container && (
         <canvas ref={canvasRef} {...container} onWheel={handleWheel} />
       )}

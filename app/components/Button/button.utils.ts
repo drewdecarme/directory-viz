@@ -17,7 +17,7 @@ export const buttonClasses: {
   },
 };
 
-function makeClass(name: string) {
+export function makeClass(name: string) {
   return `.${name}`;
 }
 
