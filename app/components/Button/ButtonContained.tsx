@@ -18,8 +18,14 @@ const styles = css`
 
   &.primary {
     color: white;
-    background: var(--color-primary-dark);
+    background-color: var(--color-primary-dark);
     letter-spacing: 1.1;
+    transition: all 0.15s ease-in-out;
+
+    &:hover,
+    &:active {
+      background-color: var(--color-primary-very-dark);
+    }
   }
 `;
 

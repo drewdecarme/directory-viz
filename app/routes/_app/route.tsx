@@ -1,4 +1,4 @@
-import { Outlet } from "@remix-run/react";
+import { Link, Outlet } from "@remix-run/react";
 import {
   DashboardSquare01Icon,
   NodeEditIcon,
@@ -19,10 +19,12 @@ export default function App() {
       <LayoutNav>
         {/* Top Section */}
         <LayoutNavSection>
-          <LayoutNavLogo
-            dxLogoUrl="/directory-viz-logo-5-transparent.png"
-            dxLogoAlt="logo"
-          />
+          <Link to="/">
+            <LayoutNavLogo
+              dxLogoUrl="/directory-viz-logo-5-transparent.png"
+              dxLogoAlt="logo"
+            />
+          </Link>
           <LayoutNavList>
             <LayoutNavListItem>
               <LayoutNavListItemNavLink dxRoute="/build">

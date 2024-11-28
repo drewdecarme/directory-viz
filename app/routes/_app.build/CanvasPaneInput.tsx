@@ -108,14 +108,19 @@ export function CanvasPaneInput() {
           defaultValue={`folder 1
     folder 1.1
         file 1.1.1
-        file 1.1.2
-    folder 1.2
-        file 1.2.1
-        file 1.2.2
-folder 2
-    folder 2.1
-        file 2.1.1
-    file 2.2`}
+    file 1.1.2
+    `}
+          //           defaultValue={`folder 1
+          //     folder 1.1
+          //         file 1.1.1
+          //         file 1.1.2
+          //     folder 1.2
+          //         file 1.2.1
+          //         file 1.2.2
+          // folder 2
+          //     folder 2.1
+          //         file 2.1.1
+          //     file 2.2`}
           className={inputStyles}
           ref={textareaRef}
           onChange={handleOnChange}

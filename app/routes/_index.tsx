@@ -32,9 +32,9 @@ const titleStyles = css`
   max-width: 1024px;
   margin: 0 auto;
   padding: 6rem 3rem;
+  text-align: center;
 
   h1 {
-    text-align: center;
     font-family: var(--font-family);
     font-size: 4rem;
     line-height: 1.2;
@@ -42,6 +42,7 @@ const titleStyles = css`
 
     span {
       background: var(--color-gradient);
+      background-clip: text;
       -webkit-background-clip: text; /* Clip the background to the text */
       -webkit-text-fill-color: transparent; /* Make the text color transparent */
     }
@@ -50,11 +51,17 @@ const titleStyles = css`
   p {
     font-family: var(--font-family-body);
     font-size: 1.25rem;
-    text-align: center;
     margin: 1rem auto 1rem auto;
     color: var(--color-text-primary);
     max-width: 50ch;
     line-height: 1.5;
+  }
+
+  div {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 0;
   }
 `;
 
@@ -109,6 +116,7 @@ const mainStyle = css`
 
 export default function Index() {
   const go = useNavigate();
+
   return (
     <>
       <header className={headerStyles}>
@@ -135,6 +143,19 @@ export default function Index() {
             directory structures & hierarchy to include in your documentation,
             apps, and marketing material
           </p>
+          <div>
+            <Button
+              dxVariant="contained"
+              dxSize="lg"
+              dxColor="primary"
+              onClick={() => go("/build")}
+            >
+              Get started for free
+            </Button>
+            <Button dxVariant="outlined" dxSize="lg" dxColor="primary">
+              Learn more
+            </Button>
+          </div>
         </div>
         <div className={mainStyle}>
           <div>
