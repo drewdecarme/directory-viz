@@ -33,11 +33,8 @@ export const links: LinksFunction = () => [
 const bodyStyles = css`
   padding: 0;
   margin: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-
   box-sizing: border-box;
+
   * {
     box-sizing: border-box;
     &::after,

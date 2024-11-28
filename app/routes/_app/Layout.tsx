@@ -7,6 +7,7 @@ const layoutCss = css`
   grid-template-columns: auto 1fr;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
 `;
 
 export type LayoutPropsNative = JSX.IntrinsicElements["section"];

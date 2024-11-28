@@ -9,6 +9,16 @@
   --color-primary-dark-raw: 158, 70, 247;
   --color-primary: rgb(var(--color-primary-raw));
   --color-primary-dark: rgb(var(--color-primary-dark-raw));
+
+  --color-gradient: linear-gradient(
+    305deg,
+    hsl(355deg 63% 70%) 1%,
+    hsl(314deg 46% 60%) 27%,
+    hsl(269deg 36% 56%) 43%,
+    hsl(221deg 42% 64%) 58%,
+    hsl(214deg 46% 63%) 74%,
+    hsl(228deg 50% 56%) 100%
+  );
 }
 
 html,

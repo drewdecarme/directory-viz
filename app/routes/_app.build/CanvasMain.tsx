@@ -277,6 +277,30 @@ const canvasStyles = css`
   width: 100%;
 `;
 
+const divStyles = css`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+
+  h1,
+  h2 {
+    font-family: var(--font-family);
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    font-family: var(--font-family-body);
+  }
+
+  img {
+    width: 100px;
+    height: auto;
+    object-fit: contain;
+  }
+`;
+
 export function CanvasMain() {
   const { getIcons } = useIcons();
   const { graph, canvasRef, globalOptions } = useDirectoryContext();
@@ -414,6 +438,18 @@ export function CanvasMain() {
     },
     [canvasRef, offset.x, offset.y, scale]
   );
+
+  console.log(graph);
+
+  if (Object.keys(graph).length === 0) {
+    return (
+      <div className={divStyles}>
+        <img src="/directory-viz-logo-hover.png" alt="empty" />
+        <h2>Nothing here!</h2>
+        <p>Start typing in the window your left and I&apos;ll disappear!</p>
+      </div>
+    );
+  }
 
   return (
     <div className={canvasStyles} ref={containerRefCallback}>
