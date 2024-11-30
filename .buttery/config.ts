@@ -1,12 +1,7 @@
-import type { ButteryConfig } from "@buttery/core/config";
-
-/**
- * This specific configuration is to locally test all of the
- * functionality associated with
- */
+import type { ButteryConfig } from "@buttery/tools/config"
 const config: ButteryConfig = {
-  icons: {
-    iconsDirectory: "../app/icons",
-  },
+  "docs": {
+    "buildTarget": "cloudflare-pages"
+  }
 };
-export default config;
+export default config

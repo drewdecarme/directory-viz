@@ -11,15 +11,16 @@ export type InputTextProps = InputTextPropsNative & InputTextPropsCustom;
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(
   function InputText({ className, type = "text", dxLabel, ...props }, ref) {
     const id = useId();
+    const { dxSize, ...restProps } = props;
     return (
       <InputContainer>
         {dxLabel && (
-          <InputLabel dxSize={props.dxSize} htmlFor={id}>
+          <InputLabel dxSize={dxSize} htmlFor={id}>
             {dxLabel}
           </InputLabel>
         )}
         <input
-          {...props}
+          {...restProps}
           id={id}
           type={type}
           className={clsx(createBaseInputStyles(props), className)}
